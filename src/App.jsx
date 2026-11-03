@@ -1,58 +1,54 @@
 import React, { useState } from 'react';
+import { Header } from './components/Header';
+import { Footer } from './components/Footer';
 import './App.css';
 
 export default function App() {
   const [blobCreado, setBlobCreado] = useState(null);
   const [contenidoSlice, setContenidoSlice] = useState('');
 
-  const textoEjemplo = "Hola! Este es un archivo de texto creado usando el concepto de Blobs en React para Lenguaje IV.";
+  const textoEjemplo = "Trabajo Práctico N°6 - Integración de componentes Header, Footer y manejo de Blobs en React.";
 
   const crearBlob = () => {
     const nuevoBlob = new Blob([textoEjemplo], { type: 'text/plain;charset=utf-8' });
     setBlobCreado(nuevoBlob);
-    alert('¡Blob de texto creado exitosamente en memoria!');
+    alert('¡Blob creado!');
   };
 
   const descargarBlob = () => {
-    if (!blobCreado) {
-      alert('Primero debes crear el Blob.');
-      return;
-    }
+    if (!blobCreado) return alert('Creá un Blob primero.');
     const url = URL.createObjectURL(blobCreado);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'ejemplo-blob.txt';
-    document.body.appendChild(a);
+    a.download = 'tp6-blob.txt';
     a.click();
-    document.body.removeChild(a);
     URL.revokeObjectURL(url);
   };
 
   const aplicarSlice = async () => {
-    if (!blobCreado) {
-      alert('Primero debes crear el Blob.');
-      return;
-    }
-    const blobTrozo = blobCreado.slice(0, 25, 'text/plain;charset=utf-8');
-    const textoRecortado = await blobTrozo.text();
-    setContenidoSlice(textoRecortado);
+    if (!blobCreado) return alert('Creá un Blob primero.');
+    const blobTrozo = blobCreado.slice(0, 20);
+    setContenidoSlice(await blobTrozo.text());
   };
 
   return (
-    <div className="container">
-      <h1>Ejemplo de uso de Blobs</h1>
-      <div className="button-group">
-        <button className="btn" onClick={crearBlob}>Crear Blob de texto</button>
-        <button className="btn" onClick={descargarBlob}>Descargar Blob</button>
-        <button className="btn" onClick={aplicarSlice}>Usar Slice</button>
-      </div>
-
-      {contenidoSlice && (
-        <div className="resultado-slice">
-          <h3>Resultado del Slice (0 a 25 caracteres):</h3>
-          <p>"{contenidoSlice}"</p>
+    <div className="layout-container">
+      <Header />
+      <main className="content">
+        <h1>Ejemplo de uso de Blobs</h1>
+        <div className="button-group">
+          <button className="btn" onClick={crearBlob}>Crear Blob de texto</button>
+          <button className="btn" onClick={descargarBlob}>Descargar Blob</button>
+          <button className="btn" onClick={aplicarSlice}>Usar Slice</button>
         </div>
-      )}
+
+        {contenidoSlice && (
+          <div className="resultado-slice">
+            <p><strong>Resultado Slice:</strong> {contenidoSlice}</p>
+          </div>
+        )}
+      </main>
+      <Footer />
     </div>
   );
 }
